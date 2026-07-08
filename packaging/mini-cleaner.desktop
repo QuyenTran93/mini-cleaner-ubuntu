@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Mini Cleaner
+Comment=Dọn rác, giám sát process và tối ưu hệ thống Ubuntu
+Exec=mini-cleaner
+Icon=utilities-system-monitor
+Terminal=false
+Type=Application
+Categories=System;Utility;

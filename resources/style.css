@@ -1,0 +1,27 @@
+/* style.css — màu sắc cảnh báo theo mức độ sử dụng tài nguyên */
+
+progressbar.level-ok progress {
+    background-color: #2ec27e; /* xanh lá - bình thường */
+}
+
+progressbar.level-warning progress {
+    background-color: #e5a50a; /* vàng - cần chú ý */
+}
+
+progressbar.level-danger progress {
+    background-color: #e01b24; /* đỏ - đang quá tải */
+}
+
+label.level-warning {
+    color: #e5a50a;
+    font-weight: bold;
+}
+
+label.level-danger {
+    color: #e01b24;
+    font-weight: bold;
+}
+
+.stat-card {
+    border-radius: 12px;
+}

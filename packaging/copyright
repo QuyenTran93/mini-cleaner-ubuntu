@@ -1,0 +1,18 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mini-cleaner
+Source: (project cá nhân, chưa có repo công khai)
+
+Files: *
+Copyright: 2026 Mini Cleaner Project
+License: MIT
+
+License: MIT
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files, to deal in
+ the software without restriction, including without limitation the
+ rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the software, subject to the following condition:
+ the above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

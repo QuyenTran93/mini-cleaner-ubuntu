@@ -70,13 +70,18 @@ class DevToolCache:
 
 
 def _go_cache_paths() -> list[str]:
+    """Đường dẫn cache Go của user (bỏ override GOMODCACHE/GOCACHE của môi trường cha)."""
     paths: list[str] = []
     try:
+        env = os.environ.copy()
+        env.pop("GOMODCACHE", None)
+        env.pop("GOCACHE", None)
         result = subprocess.run(
             ["go", "env", "GOMODCACHE", "GOCACHE"],
             capture_output=True,
             text=True,
             timeout=5,
+            env=env,
         )
         if result.returncode == 0:
             for line in result.stdout.splitlines():
@@ -187,15 +192,34 @@ def _clear_paths(paths: list[str]) -> None:
             _remove_path(path)
 
 
-def clean_dev_tool_cache(tool: DevToolCache) -> tuple[bool, str]:
-    if tool.id == "go" and _binary_on_path("go"):
+def _clean_go_cache(tool: DevToolCache) -> tuple[bool, str]:
+    """Dọn đúng các path đã quét: gắn env cho go clean rồi luôn xóa nội dung path."""
+    if _binary_on_path("go"):
         try:
+            env = os.environ.copy()
+            env.pop("GOMODCACHE", None)
+            env.pop("GOCACHE", None)
+            if len(tool.paths) >= 1:
+                env["GOMODCACHE"] = tool.paths[0]
+            if len(tool.paths) >= 2:
+                env["GOCACHE"] = tool.paths[1]
             for args in (["go", "clean", "-modcache"], ["go", "clean", "-cache"]):
-                subprocess.run(args, capture_output=True, text=True, timeout=120)
-            return True, f"Đã dọn {tool.title} (CLI)"
+                subprocess.run(
+                    args, capture_output=True, text=True, timeout=120, env=env
+                )
         except Exception:
             pass
-    elif tool.cli_clean and _binary_on_path(tool.cli_clean[0]):
+    try:
+        _clear_paths(tool.paths)
+        return True, f"Đã dọn {tool.title}"
+    except Exception as e:
+        return False, str(e)
+
+
+def clean_dev_tool_cache(tool: DevToolCache) -> tuple[bool, str]:
+    if tool.id == "go":
+        return _clean_go_cache(tool)
+    if tool.cli_clean and _binary_on_path(tool.cli_clean[0]):
         try:
             result = subprocess.run(
                 tool.cli_clean, capture_output=True, text=True, timeout=120

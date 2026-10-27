@@ -226,9 +226,6 @@ class CleanerPage(Gtk.Box):
         scroller.set_vexpand(True)
         self.append(scroller)
 
-        self.dev_tools_slot = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        self.append(self.dev_tools_slot)
-
         # ---------- Thông tin kernel cũ (chỉ đọc) ----------
         self.kernel_label = Gtk.Label(wrap=True, xalign=0)
         self.kernel_label.add_css_class("dim-label")
@@ -282,14 +279,6 @@ class CleanerPage(Gtk.Box):
             dev_tools,
         )
 
-    def _clear_dev_tools_slot(self):
-        child = self.dev_tools_slot.get_first_child()
-        while child is not None:
-            nxt = child.get_next_sibling()
-            self.dev_tools_slot.remove(child)
-            child = nxt
-        self._dev_group = None
-
     def _on_scan_done(
         self, categories, orphan_names, current_kernel, all_kernels, dev_tools
     ):
@@ -301,6 +290,7 @@ class CleanerPage(Gtk.Box):
             self.rows_box.remove(child)
             child = nxt
         self._rows = []
+        self._dev_group = None
 
         for cat in categories:
             row = CleanerRow(cat)
@@ -308,10 +298,10 @@ class CleanerPage(Gtk.Box):
             self._rows.append(row)
             self.rows_box.append(row)
 
-        self._clear_dev_tools_slot()
+        # Cùng boxed-list với các mục khác — tránh nhìn lạc loài ngoài khung trắng
         if dev_tools:
             self._dev_group = DevToolsCleanerGroup(dev_tools, self._update_total)
-            self.dev_tools_slot.append(self._dev_group)
+            self.rows_box.append(self._dev_group)
 
         other_kernels = [k for k in all_kernels if current_kernel not in k]
         if other_kernels:
